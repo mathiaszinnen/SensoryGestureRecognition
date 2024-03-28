@@ -1,7 +1,6 @@
 import json
 import glob
 import os
-import cv2
 import json
 import os
 from tqdm import tqdm
