@@ -1,0 +1,428 @@
+2024/03/28 14:37:28 - mmengine - INFO - 
+------------------------------------------------------------
+System environment:
+    sys.platform: linux
+    Python: 3.11.0 (main, Mar  1 2023, 18:26:19) [GCC 11.2.0]
+    CUDA available: True
+    MUSA available: False
+    numpy_random_seed: 948028260
+    GPU 0,1: Quadro RTX 6000
+    CUDA_HOME: /opt/cuda
+    NVCC: Cuda compilation tools, release 12.3, V12.3.107
+    GCC: gcc (GCC) 13.2.1 20230801
+    PyTorch: 2.2.0+cu121
+    PyTorch compiling details: PyTorch built with:
+  - GCC 9.3
+  - C++ Version: 201703
+  - Intel(R) oneAPI Math Kernel Library Version 2022.2-Product Build 20220804 for Intel(R) 64 architecture applications
+  - Intel(R) MKL-DNN v3.3.2 (Git Hash 2dc95a2ad0841e29db8b22fbccaf3e5da7992b01)
+  - OpenMP 201511 (a.k.a. OpenMP 4.5)
+  - LAPACK is enabled (usually provided by MKL)
+  - NNPACK is enabled
+  - CPU capability usage: AVX512
+  - CUDA Runtime 12.1
+  - NVCC architecture flags: -gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_70,code=sm_70;-gencode;arch=compute_75,code=sm_75;-gencode;arch=compute_80,code=sm_80;-gencode;arch=compute_86,code=sm_86;-gencode;arch=compute_90,code=sm_90
+  - CuDNN 8.9.2
+  - Magma 2.6.1
+  - Build settings: BLAS_INFO=mkl, BUILD_TYPE=Release, CUDA_VERSION=12.1, CUDNN_VERSION=8.9.2, CXX_COMPILER=/opt/rh/devtoolset-9/root/usr/bin/c++, CXX_FLAGS= -D_GLIBCXX_USE_CXX11_ABI=0 -fabi-version=11 -fvisibility-inlines-hidden -DUSE_PTHREADPOOL -DNDEBUG -DUSE_KINETO -DLIBKINETO_NOROCTRACER -DUSE_FBGEMM -DUSE_QNNPACK -DUSE_PYTORCH_QNNPACK -DUSE_XNNPACK -DSYMBOLICATE_MOBILE_DEBUG_HANDLE -O2 -fPIC -Wall -Wextra -Werror=return-type -Werror=non-virtual-dtor -Werror=bool-operation -Wnarrowing -Wno-missing-field-initializers -Wno-type-limits -Wno-array-bounds -Wno-unknown-pragmas -Wno-unused-parameter -Wno-unused-function -Wno-unused-result -Wno-strict-overflow -Wno-strict-aliasing -Wno-stringop-overflow -Wsuggest-override -Wno-psabi -Wno-error=pedantic -Wno-error=old-style-cast -Wno-missing-braces -fdiagnostics-color=always -faligned-new -Wno-unused-but-set-variable -Wno-maybe-uninitialized -fno-math-errno -fno-trapping-math -Werror=format -Wno-stringop-overflow, LAPACK_INFO=mkl, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, PERF_WITH_AVX512=1, TORCH_VERSION=2.2.0, USE_CUDA=ON, USE_CUDNN=ON, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_MKL=ON, USE_MKLDNN=ON, USE_MPI=OFF, USE_NCCL=1, USE_NNPACK=ON, USE_OPENMP=ON, USE_ROCM=OFF, USE_ROCM_KERNEL_ASSERT=OFF, 
+
+    TorchVision: 0.17.0+cu121
+    OpenCV: 4.9.0
+    MMEngine: 0.10.3
+
+Runtime environment:
+    cudnn_benchmark: False
+    mp_cfg: {'mp_start_method': 'fork', 'opencv_num_threads': 0}
+    dist_cfg: {'backend': 'nccl'}
+    seed: 948028260
+    deterministic: False
+    Distributed launcher: none
+    Distributed training: False
+    GPU number: 1
+------------------------------------------------------------
+
+2024/03/28 14:37:28 - mmengine - INFO - Config:
+FRQS = [
+    56.41,
+    38.90345,
+    10.92159,
+    40.29286,
+    22.12157,
+    90.256,
+    451.28,
+    19.28547,
+    26.54588,
+    51.28182,
+    132.72941,
+    12.00213,
+    56.41,
+    90.256,
+    322.34286,
+    1.8185,
+]
+SNIFFYART_CLASSES = [
+    'cooking',
+    'dancing',
+    'drinking',
+    'eating',
+    'holding the nose',
+    'painting',
+    'peeing',
+    'playing music',
+    'praying',
+    'reading',
+    'sleeping',
+    'smoking',
+    'sniffing',
+    'textile work',
+    'writing',
+    'none',
+]
+checkpoint = 'https://download.openmmlab.com/mmclassification/v0/resnet/resnet101_8xb32_in1k_20210831-539c63f8.pth'
+data_preprocessor = dict(
+    mean=[
+        0,
+        0,
+        0,
+    ],
+    num_classes=16,
+    std=[
+        255,
+        255,
+        255,
+    ],
+    to_onehot=True,
+    to_rgb=True)
+data_root = 'data/crop_cls'
+dataset_type = 'VOC'
+default_hooks = dict(
+    checkpoint=dict(_scope_='mmpretrain', interval=1, type='CheckpointHook'),
+    logger=dict(_scope_='mmpretrain', interval=100, type='LoggerHook'),
+    param_scheduler=dict(_scope_='mmpretrain', type='ParamSchedulerHook'),
+    sampler_seed=dict(_scope_='mmpretrain', type='DistSamplerSeedHook'),
+    timer=dict(_scope_='mmpretrain', type='IterTimerHook'),
+    visualization=dict(
+        _scope_='mmpretrain', enable=False, type='VisualizationHook'))
+default_scope = 'mmpretrain'
+env_cfg = dict(
+    cudnn_benchmark=False,
+    dist_cfg=dict(backend='nccl'),
+    mp_cfg=dict(mp_start_method='fork', opencv_num_threads=0))
+launcher = 'none'
+load_from = None
+log_level = 'INFO'
+model = dict(
+    _scope_='mmpretrain',
+    backbone=dict(
+        arch='base',
+        img_size=384,
+        init_cfg=dict(prefix='backbone', type='Pretrained'),
+        stage_cfgs=dict(block_cfgs=dict(window_size=12)),
+        type='SwinTransformer'),
+    head=dict(
+        in_channels=1024,
+        lam=0.1,
+        loss=dict(
+            loss_weight=0.1,
+            pos_weight=[
+                56.41,
+                38.90345,
+                10.92159,
+                40.29286,
+                22.12157,
+                90.256,
+                451.28,
+                19.28547,
+                26.54588,
+                51.28182,
+                132.72941,
+                12.00213,
+                56.41,
+                90.256,
+                322.34286,
+                1.8185,
+            ],
+            type='CrossEntropyLoss',
+            use_sigmoid=True),
+        num_classes=16,
+        num_heads=1,
+        type='CSRAClsHead'),
+    neck=None,
+    type='ImageClassifier')
+num_classes = 16
+optim_wrapper = dict(
+    optimizer=dict(
+        _scope_='mmpretrain',
+        lr=0.0002,
+        momentum=0.9,
+        type='SGD',
+        weight_decay=0.0001),
+    paramwise_cfg=dict(custom_keys=dict(head=dict(lr_mult=10))))
+param_scheduler = [
+    dict(
+        _scope_='mmpretrain',
+        begin=0,
+        by_epoch=True,
+        convert_to_iter_based=True,
+        end=1,
+        start_factor=1e-07,
+        type='LinearLR'),
+    dict(
+        _scope_='mmpretrain',
+        by_epoch=True,
+        gamma=0.1,
+        step_size=6,
+        type='StepLR'),
+]
+randomness = dict(deterministic=False, seed=None)
+resume = False
+test_cfg = dict()
+test_dataloader = dict(
+    batch_size=16,
+    dataset=dict(
+        _scope_='mmpretrain',
+        classes=[
+            'cooking',
+            'dancing',
+            'drinking',
+            'eating',
+            'holding the nose',
+            'painting',
+            'peeing',
+            'playing music',
+            'praying',
+            'reading',
+            'sleeping',
+            'smoking',
+            'sniffing',
+            'textile work',
+            'writing',
+            'none',
+        ],
+        data_root='data/crop_cls',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(scale=448, type='Resize'),
+            dict(
+                meta_keys=(
+                    'sample_idx',
+                    'img_path',
+                    'ori_shape',
+                    'img_shape',
+                    'scale_factor',
+                    'flip',
+                    'flip_direction',
+                    'gt_label_difficult',
+                ),
+                type='PackInputs'),
+        ],
+        split='test',
+        type='VOC'),
+    num_workers=5,
+    sampler=dict(_scope_='mmpretrain', shuffle=False, type='DefaultSampler'))
+test_evaluator = [
+    dict(_scope_='mmpretrain', type='VOCMultiLabelMetric'),
+    dict(_scope_='mmpretrain', average='micro', type='VOCMultiLabelMetric'),
+    dict(_scope_='mmpretrain', type='VOCAveragePrecision'),
+]
+test_pipeline = [
+    dict(_scope_='mmpretrain', type='LoadImageFromFile'),
+    dict(_scope_='mmpretrain', scale=448, type='Resize'),
+    dict(
+        _scope_='mmpretrain',
+        meta_keys=(
+            'sample_idx',
+            'img_path',
+            'ori_shape',
+            'img_shape',
+            'scale_factor',
+            'flip',
+            'flip_direction',
+            'gt_label_difficult',
+        ),
+        type='PackInputs'),
+]
+train_cfg = dict(by_epoch=True, max_epochs=20, val_interval=1)
+train_dataloader = dict(
+    batch_size=16,
+    dataset=dict(
+        _scope_='mmpretrain',
+        data_root='data/VOC2007',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(
+                crop_ratio_range=(
+                    0.7,
+                    1.0,
+                ),
+                scale=448,
+                type='RandomResizedCrop'),
+            dict(direction='horizontal', prob=0.5, type='RandomFlip'),
+            dict(type='PackInputs'),
+        ],
+        split='trainval',
+        type='VOC'),
+    num_workers=5,
+    sampler=dict(_scope_='mmpretrain', shuffle=True, type='DefaultSampler'))
+train_pipeline = [
+    dict(_scope_='mmpretrain', type='LoadImageFromFile'),
+    dict(
+        _scope_='mmpretrain',
+        crop_ratio_range=(
+            0.7,
+            1.0,
+        ),
+        scale=448,
+        type='RandomResizedCrop'),
+    dict(
+        _scope_='mmpretrain',
+        direction='horizontal',
+        prob=0.5,
+        type='RandomFlip'),
+    dict(_scope_='mmpretrain', type='PackInputs'),
+]
+val_cfg = dict()
+val_dataloader = dict(
+    batch_size=16,
+    dataset=dict(
+        _scope_='mmpretrain',
+        classes=[
+            'cooking',
+            'dancing',
+            'drinking',
+            'eating',
+            'holding the nose',
+            'painting',
+            'peeing',
+            'playing music',
+            'praying',
+            'reading',
+            'sleeping',
+            'smoking',
+            'sniffing',
+            'textile work',
+            'writing',
+            'none',
+        ],
+        data_root='data/crop_cls',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(scale=448, type='Resize'),
+            dict(
+                meta_keys=(
+                    'sample_idx',
+                    'img_path',
+                    'ori_shape',
+                    'img_shape',
+                    'scale_factor',
+                    'flip',
+                    'flip_direction',
+                    'gt_label_difficult',
+                ),
+                type='PackInputs'),
+        ],
+        split='val',
+        type='VOC'),
+    num_workers=5,
+    sampler=dict(_scope_='mmpretrain', shuffle=False, type='DefaultSampler'))
+val_evaluator = [
+    dict(_scope_='mmpretrain', type='VOCMultiLabelMetric'),
+    dict(_scope_='mmpretrain', average='micro', type='VOCMultiLabelMetric'),
+    dict(_scope_='mmpretrain', type='VOCAveragePrecision'),
+]
+vis_backends = [
+    dict(_scope_='mmpretrain', type='LocalVisBackend'),
+]
+visualizer = dict(
+    _scope_='mmpretrain',
+    type='UniversalVisualizer',
+    vis_backends=[
+        dict(type='LocalVisBackend'),
+    ])
+work_dir = './work_dirs/crop_cls'
+
+2024/03/28 14:37:29 - mmengine - INFO - Distributed training is not used, all SyncBatchNorm (SyncBN) layers in the model will be automatically reverted to BatchNormXd layers if they are used.
+2024/03/28 14:37:29 - mmengine - INFO - Hooks will be executed in the following order:
+before_run:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+before_train:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_train_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) DistSamplerSeedHook                
+ -------------------- 
+before_train_iter:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_train_iter:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(BELOW_NORMAL) LoggerHook                         
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+after_train_epoch:
+(NORMAL      ) IterTimerHook                      
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_val:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+before_val_epoch:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+before_val_iter:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_val_iter:
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) VisualizationHook                  
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_val_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(BELOW_NORMAL) LoggerHook                         
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+after_val:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+after_train:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_test:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+before_test_epoch:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+before_test_iter:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_test_iter:
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) VisualizationHook                  
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_test_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_test:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+after_run:
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
