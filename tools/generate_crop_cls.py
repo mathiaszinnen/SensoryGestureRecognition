@@ -1,5 +1,6 @@
 import json
 import glob
+import cv2
 import os
 from tqdm import tqdm
 import xml.etree.cElementTree as ET
@@ -56,7 +57,7 @@ def main():
         f'{data_dir}/annotations/test.json',
     ]
     img_src_dir = f'{data_dir}/images/'
-    tgt_base = f'{data_dir}/cls/VOC2012'
+    tgt_base = f'{data_dir}/crop_cls/VOC2012'
     img_tgt_dir = f'{tgt_base}/JPEGImages'
     ann_tgt_dir = f'{tgt_base}/ImageSets/Main'
     xml_tgt_dir = f'{tgt_base}/Annotations'
@@ -67,9 +68,6 @@ def main():
         print(f'Creating classification structure for {spl} split...')
         with open(coco_pth) as f:
             coco = json.load(f)
-        catnames = {cat['id']: cat['name'] for cat in coco['categories']}
-        for name in catnames.keys():
-            os.makedirs(f'{data_dir}/cls/{spl}/{name}', exist_ok=True)
         for ann in tqdm(coco['annotations']):
             fn = [img['file_name'] for img in coco['images'] if ann['image_id'] == img['id']][0] 
             bn, ext = os.path.splitext(fn)
