@@ -1,8 +1,6 @@
 import json
 import glob
 import os
-import json
-import os
 from tqdm import tqdm
 import xml.etree.cElementTree as ET
 
