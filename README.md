@@ -5,6 +5,8 @@ This repository contains
 
 For further instructions, please refer to the README files in the respective subdirectories ([baselines](baselines/README.md), [tools](tools/README.md)).
 
+The associated dataset is published on zenodo under the doi [10.5281/zenodo.10889612](https://zenodo.org/records/10889612).
+
 ## Funding acknowledgement
 
 <img src="https://github.com/Odeuropa/.github/raw/main/profile/eu-logo.png" width="80" height="54" align="left" alt="EU logo" />
