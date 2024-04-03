@@ -1,5 +1,6 @@
 _base_ = ['mmpretrain::csra/resnet101-csra_1xb16_voc07-448px.py']
 
+checkpoint = 'https://download.openmmlab.com/mmclassification/v0/swin-transformer/convert/swin_base_patch4_window12_384_22kto1k-d59b0d1d.pth'
 
 SNIFFYART_CLASSES = [
     'cooking', 'dancing', 'drinking', 'eating', 'holding the nose', 
@@ -16,7 +17,14 @@ data_preprocessor = dict(
     num_classes = num_classes
 )
 
-data_root = 'data/crop_cls'
+data_root = 'data/crop_cls/VOC2012/'
+
+train_dataloader = dict(
+    dataset = dict(
+        data_root=data_root,
+        split='train'
+    )
+)
 
 val_dataloader = dict(
     dataset = dict(
@@ -43,7 +51,8 @@ model = dict(
         stage_cfgs=dict(block_cfgs=dict(window_size=12)),
         init_cfg=dict(
             type='Pretrained',
-            prefix='backbone'
+            prefix='backbone',
+            checkpoint=checkpoint
         )
     ),
     head = dict(

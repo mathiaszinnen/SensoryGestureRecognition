@@ -34,7 +34,7 @@ SNIFFYART_CLASSES = [
     'writing',
     'none',
 ]
-checkpoint = 'https://download.openmmlab.com/mmclassification/v0/resnet/resnet101_8xb32_in1k_20210831-539c63f8.pth'
+checkpoint = 'https://download.openmmlab.com/mmclassification/v0/swin-transformer/convert/swin_base_patch4_window12_384_22kto1k-d59b0d1d.pth'
 data_preprocessor = dict(
     mean=[
         0,
@@ -49,7 +49,7 @@ data_preprocessor = dict(
     ],
     to_onehot=True,
     to_rgb=True)
-data_root = 'data/crop_cls'
+data_root = 'data/crop_cls/VOC2012/'
 dataset_type = 'VOC'
 default_hooks = dict(
     checkpoint=dict(_scope_='mmpretrain', interval=1, type='CheckpointHook'),
@@ -72,7 +72,11 @@ model = dict(
     backbone=dict(
         arch='base',
         img_size=384,
-        init_cfg=dict(prefix='backbone', type='Pretrained'),
+        init_cfg=dict(
+            checkpoint=
+            'https://download.openmmlab.com/mmclassification/v0/swin-transformer/convert/swin_base_patch4_window12_384_22kto1k-d59b0d1d.pth',
+            prefix='backbone',
+            type='Pretrained'),
         stage_cfgs=dict(block_cfgs=dict(window_size=12)),
         type='SwinTransformer'),
     head=dict(
@@ -155,7 +159,7 @@ test_dataloader = dict(
             'writing',
             'none',
         ],
-        data_root='data/crop_cls',
+        data_root='data/crop_cls/VOC2012/',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(scale=448, type='Resize'),
@@ -203,7 +207,7 @@ train_dataloader = dict(
     batch_size=16,
     dataset=dict(
         _scope_='mmpretrain',
-        data_root='data/VOC2007',
+        data_root='data/crop_cls/VOC2012/',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(
@@ -216,7 +220,7 @@ train_dataloader = dict(
             dict(direction='horizontal', prob=0.5, type='RandomFlip'),
             dict(type='PackInputs'),
         ],
-        split='trainval',
+        split='train',
         type='VOC'),
     num_workers=5,
     sampler=dict(_scope_='mmpretrain', shuffle=True, type='DefaultSampler'))
@@ -260,7 +264,7 @@ val_dataloader = dict(
             'writing',
             'none',
         ],
-        data_root='data/crop_cls',
+        data_root='data/crop_cls/VOC2012/',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(scale=448, type='Resize'),

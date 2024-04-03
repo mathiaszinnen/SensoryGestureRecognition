@@ -23,11 +23,11 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Perform inference via combining \
                                      a detection and classification models')
     parser.add_argument('--detector', help='config for the detection model to use',
-                        default='configs/person_detection.py')
+                        default='baselines/mm/configs/person_detection.py')
     parser.add_argument('--detection_weights', help='path to the weights for the detection model',
                         default='/hdd/models/best_coco_bbox_mAP_epoch_166.pth')
     parser.add_argument('--classifier', help='config for the classification model to use',
-                        default='configs/crop_cls.py')
+                        default='baselines/mm/configs/crop_cls.py')
     parser.add_argument('--cls_weights', help='weights for the classification model',
                         default='/hdd/models/swinb_cls_best.pth')
     parser.add_argument('--det_thresh', type=float, help='keep only detection with confidence over det_thresh.',
