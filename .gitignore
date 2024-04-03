@@ -1,4 +1,5 @@
 data/
+datasets/
 .vscode/
 work_dirs/
 tmpdir/
