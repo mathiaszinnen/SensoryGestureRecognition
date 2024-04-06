@@ -61,3 +61,11 @@ model = dict(
         loss=dict(pos_weight=FRQS, loss_weight=0.1)
     )
 )
+
+test_evaluator = [
+    dict(_scope_='mmpretrain', type='VOCMultiLabelMetric'),
+    dict(_scope_='mmpretrain', type='VOCMultiLabelMetric', average=None),
+    dict(_scope_='mmpretrain', average='micro', type='VOCMultiLabelMetric'),
+    dict(_scope_='mmpretrain', type='VOCAveragePrecision'),
+    # dict(_scope_='mmpretrain', type='ConfusionMatqrix'),
+]
