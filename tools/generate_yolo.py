@@ -12,7 +12,9 @@ def make_dirs(dir):
     """Creates a directory with subdirectories 'labels' and 'images', removing existing ones."""
     dir = Path(dir)
     if dir.exists():
-        raise Exception("Please pass an empty dir.")
+        print("Dataset target directory already exists. Skipping.")
+        exit()
+
     for p in dir, dir / "labels", dir / "images":
         p.mkdir(parents=True, exist_ok=True)  # make dir
     return dir
@@ -22,7 +24,7 @@ def convert_coco_json(src_imgs, src_anns, out_dir):
     json_dir = Path(src_anns)
     save_dir = make_dirs(out_dir)
     out_yaml = dict()
-    out_yaml['path'] = out_dir
+    out_yaml['path'] = out_dir.replace('datasets/','')
 
     # Import json
     for json_file in [Path(json_dir,split) for split in ['train.json', 'valid.json', 'test.json']]:
@@ -32,7 +34,7 @@ def convert_coco_json(src_imgs, src_anns, out_dir):
 
         imgs_dir = Path(save_dir) / "images" / json_file.stem
         imgs_dir.mkdir()
-        out_yaml[json_file.stem] = str(imgs_dir)
+        out_yaml[json_file.stem] = f'images/{json_file.stem}'
 
         with open(json_file) as f:
             data = json.load(f)
@@ -80,6 +82,8 @@ def convert_coco_json(src_imgs, src_anns, out_dir):
                     file.write(("%g " * len(line)).rstrip() % line + "\n")
     
     # Write yolo yaml
+    out_yaml['val'] = out_yaml['valid']
+    del out_yaml['valid']
     with open(f'{out_dir}/sensoryart.yaml', 'w') as f:
         yaml.dump(out_yaml, f)
 
@@ -91,10 +95,10 @@ if __name__ == '__main__':
     src_imgs = 'data/images'
     if args.type == 'person':
         src_anns = 'data/annotations/'
-        out_dir = 'data/yolo_persons'
+        out_dir = 'datasets/yolo_persons'
     elif args.type == 'gesture':
         src_anns = 'data/annotations/gesture_detection'
-        out_dir = 'data/yolo_gestures'
+        out_dir = 'datasets/yolo_gestures'
 
 
     convert_coco_json(src_imgs=src_imgs, src_anns=src_anns, out_dir=out_dir)
