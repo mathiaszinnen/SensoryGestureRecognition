@@ -17,13 +17,19 @@ Below are instructions on how to train and evaluate models for each of these lab
 
 ## Gesture Detection
 - To prepare the dataset for gesture detection run `tools/generate_multigesture.py`
+- Gesture detection can be trained and evaluated similar to the person detection mmdetection models replacing `<<config>>` with `mm/configs/gesture_detection.py`
 
 ## Human Pose Estimation
 
-## Gesture Classification
+## Gesture Classification (Person-Level)
+
+## Gesture Classification (Image-Level)
+- Prepare the dataset for image-level gesture classification by running `tools/generate_cls.py`.
+
+
 
 ## Multi-Task Approaches
-
+<!-- 
 ## MM
 Most models are trainied using the openmmlab frameworks MMDetection, MMPretrain, MMPose, or combinations of these. 
 All openmmlab-based algorithms are to be found in the `mm` subfolder.
@@ -41,4 +47,4 @@ To evaluate subsequent detection and classification models, invoke `mm/two_stage
 
 ## Ultralytics
 
-The code to train and evaluate yolov8 detection models and the multi-task detection/pose estimation models can be found in the `ultralytics` subfolder.
+The code to train and evaluate yolov8 detection models and the multi-task detection/pose estimation models can be found in the `ultralytics` subfolder. -->

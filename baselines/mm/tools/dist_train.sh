@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# run from project root
 
 CONFIG=$1
 GPUS=$2
@@ -14,6 +15,7 @@ python -m torch.distributed.launch \
     --master_addr=$MASTER_ADDR \
     --nproc_per_node=$GPUS \
     --master_port=$PORT \
-    train.py \
+    baselines/mm/train.py \
     $CONFIG \
+    --work-dir 'work_dirs/imagelevelcls_5'\
     --launcher pytorch ${@:3}
