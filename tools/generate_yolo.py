@@ -19,7 +19,7 @@ def make_dirs(dir):
         p.mkdir(parents=True, exist_ok=True)  # make dir
     return dir
 
-def convert_coco_json(src_imgs, src_anns, out_dir):
+def convert_coco_json(src_imgs, src_anns, out_dir, use_keypoints=False):
     """Converts SENSORYART JSON format to YOLO label format, with options for segments and class mapping."""
     json_dir = Path(src_anns)
     save_dir = make_dirs(out_dir)
@@ -55,6 +55,7 @@ def convert_coco_json(src_imgs, src_anns, out_dir):
             h, w, f = img["height"], img["width"], img["file_name"]
 
             bboxes = []
+            keypoints = []
             for ann in anns:
                 if ann["iscrowd"]:
                     continue
@@ -70,6 +71,14 @@ def convert_coco_json(src_imgs, src_anns, out_dir):
                 box = [cls] + box.tolist()
                 if box not in bboxes:
                     bboxes.append(box)
+                if use_keypoints:
+                    out_yaml['kpt_shape'] = [17, 3] 
+                    out_yaml['flip_idx'] = [0, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 14, 13, 16, 15]
+                    ann_kpts = np.array(ann['keypoints'], dtype=np.float64)
+                    ann_kpts[0::3] /= w # normalize x
+                    ann_kpts[1::3] /= h # normalize y
+                    keypoints.append(ann_kpts)
+                    
 
             # Copy images
             shutil.copyfile(f'{src_imgs}/{f}', f'{imgs_dir}/{f}'), 
@@ -79,6 +88,8 @@ def convert_coco_json(src_imgs, src_anns, out_dir):
             with open((fn / f).with_suffix(".txt"), "a") as file:
                 for i in range(len(bboxes)):
                     line = (*bboxes[i],)  # cls, box or segments
+                    if use_keypoints:
+                        line += (*keypoints[i],)
                     file.write(("%g " * len(line)).rstrip() % line + "\n")
     
     # Write yolo yaml
@@ -89,9 +100,10 @@ def convert_coco_json(src_imgs, src_anns, out_dir):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('type', type=str, choices=['person', 'gesture'])
+    parser.add_argument('type', type=str, choices=['person', 'gesture','multitask'])
     args = parser.parse_args()
 
+    use_kpts = False
     src_imgs = 'data/images'
     if args.type == 'person':
         src_anns = 'data/annotations/'
@@ -99,6 +111,13 @@ if __name__ == '__main__':
     elif args.type == 'gesture':
         src_anns = 'data/annotations/gesture_detection'
         out_dir = 'datasets/yolo_gestures'
+    elif args.type == 'pose':
+        src_anns = 'data/annotations/'
+        out_dir = 'dataset/yolo_poses'
+    elif args.type == 'multitask':
+        src_anns = 'data/annotations/gesture_detection'
+        out_dir = 'datasets/yolo_multitask'
+        use_kpts=True
 
 
-    convert_coco_json(src_imgs=src_imgs, src_anns=src_anns, out_dir=out_dir)
+    convert_coco_json(src_imgs=src_imgs, src_anns=src_anns, out_dir=out_dir, use_keypoints=use_kpts)
