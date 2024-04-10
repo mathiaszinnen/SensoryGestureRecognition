@@ -7,7 +7,7 @@ from torcheval.metrics import AUC
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('type', help='Metric to compute', choices = ['coco', 'multilabel'])
+    parser.add_argument('type', help='Metric to compute', choices = ['coco', 'multilabel','all'])
     parser.add_argument('gt_coco', help='Path to ground truth json in coco format')
     parser.add_argument('detections', help='Path to predictions json in coco format, only annotations array needed')
     parser.add_argument('conf_thresh', help='Keep only predictions with confidence above', type=float, default=.5)
@@ -18,6 +18,9 @@ def main():
     if args.type == 'coco':
         compute_coco(args)
     if args.type == 'multilabel':
+        compute_cls_metric(args)
+    if args.type == 'all':
+        compute_coco(args)
         compute_cls_metric(args)
 
 
