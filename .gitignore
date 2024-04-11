@@ -4,3 +4,5 @@ runs/
 .vscode/
 work_dirs/
 tmpdir/
+*.pt
+*.pth
