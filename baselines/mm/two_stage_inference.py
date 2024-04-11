@@ -1,4 +1,5 @@
 from mmdet.apis import DetInferencer
+import cv2
 from mmengine.config import Config
 from mmdet.registry import DATASETS, RUNNERS
 from mmpretrain.registry import RUNNERS as CLS_RUNNERS, TRANSFORMS
@@ -14,6 +15,9 @@ from mmpretrain.structures import DataSample
 from pycocotools.coco import COCO
 from pycocotools.cocoeval import COCOeval
 from mmdet.utils import register_all_modules
+import matplotlib.pyplot as plt
+from mmdet.visualization.palette import _get_adaptive_scales
+import random
 
 from tqdm import tqdm
 import json
@@ -26,12 +30,14 @@ def parse_args():
                         default='baselines/mm/configs/person_detection.py')
     parser.add_argument('--detection_weights', help='path to the weights for the detection model',
                         default='/hdd/models/best_coco_bbox_mAP_epoch_166.pth')
+                        # default='/hdd/models/dino_swinb_person_best.pth')
     parser.add_argument('--classifier', help='config for the classification model to use',
                         default='baselines/mm/configs/crop_cls.py')
     parser.add_argument('--cls_weights', help='weights for the classification model',
                         default='/hdd/models/swinb_cls_best.pth')
     parser.add_argument('--det_thresh', type=float, help='keep only detection with confidence over det_thresh.',
                         default=.5)
+    parser.add_argument('--vis', help='Draw visualizations of classifications and detections', action='store_true')
     return parser.parse_args()
 
 def handle_vis(cfg):
@@ -43,16 +49,16 @@ def handle_vis(cfg):
     return cfg
 
 
-def parse_det_cfg(args, vis=False):
+def parse_det_cfg(args):
     det_cfg = Config.fromfile(args.detector)
     workdir = './work_dirs/twostage'
     det_cfg.work_dir=workdir
-    if vis:
+    if args.vis:
         det_cfg = handle_vis(det_cfg)
     det_cfg.test_evaluator.format_only=True
     det_cfg.test_evaluator.outfile_prefix=f'{workdir}/detections'
     det_cfg.load_from=args.detection_weights
-    if vis:
+    if args.vis:
         det_cfg.default_hooks.visualization.test_out_dir=f'{workdir}/detection'
 
     return det_cfg
@@ -116,6 +122,54 @@ def xywh_to_xyxy_sane(box, img):
     return x,y,x2,y2
 
 
+def get_random_color():
+    return (random.randint(0,255),random.randint(0,255),random.randint(0,255))
+
+
+def draw_boxes(img, anns, coco_img, visualizer):
+    visualizer.set_image(img)
+    anns = [ann for ann in anns if ann['image_id'] == coco_img['id']]
+    classes = visualizer.dataset_meta['classes']
+    colors = [get_random_color() for _ in range(len(classes))]
+    bboxes = []
+    for ann in anns:
+        x,y,w,h = list(map(int,ann['bbox']))
+        bboxes.append([x,y,x+w,y+h])
+    bboxes = torch.Tensor(bboxes)
+    visualizer.draw_bboxes(
+        bboxes=bboxes,
+        edge_colors=colors
+    )
+    positions = bboxes[:,:2] + 2
+    areas = (bboxes[:, 3] - bboxes[:, 1]) * (
+    bboxes[:, 2] - bboxes[:, 0])
+    scales = _get_adaptive_scales(areas)
+    labels = [ann['category_id'] for ann in anns]
+    scores = [ann['score'] for ann in anns]
+
+    for i, (pos, label, score) in enumerate(zip(positions, labels, scores)):
+        label_text = classes[label-1] 
+        score = round(float(score) * 100, 1)
+        label_text += f': {score}'
+
+        newpos = torch.Tensor([pos[0], pos[1] + 2*i])
+
+        visualizer.draw_texts(
+            label_text,
+            newpos,
+            colors=colors[label-1],
+            font_sizes=int(13 * scales[i]),
+            bboxes=[{
+                'facecolor': 'black',
+                'alpha': 0.8,
+                'pad': 0.7,
+                'edgecolor': 'none'
+            }])
+
+    imwrite(visualizer.get_image(), f'twostage_vis/{coco_img["file_name"]}')
+    return
+
+
 def main():
     args = parse_args() 
 
@@ -165,8 +219,12 @@ def main():
                     'category_id': label.detach().cpu().item()+1,
                     'score': score.detach().cpu().item()
                 })
+        if args.vis:
+            box_anns = [ann for ann in updated_anns if ann['image_id'] == coco_img['id']]
+            draw_boxes(img, box_anns, coco_img, cls_runner.visualizer)
 
-    out_path_base = '/hdd/sniffyart/predictions'
+
+    out_path_base = '/hdd/sniffyart/predictions/debug'
     out_path = f'{out_path_base}/t{int(det_thresh*100)}_preds.json'
     with open(out_path, 'w') as f:
         json.dump(updated_anns, f)
