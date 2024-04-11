@@ -7,6 +7,7 @@ import argparse
 
 
 def val_on_test(model, yaml_pth):
+    print('val on test')
     with open(yaml_pth) as f:
         ds_yaml = yaml.safe_load(f)
     backup_path = f'{os.path.splitext(yaml_pth)[0]}_backup.yaml'
@@ -25,7 +26,7 @@ def val_on_test(model, yaml_pth):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('type', help='type of model to train', choices=['persons', 'gestures', 'multitask'])
+    parser.add_argument('type', help='type of model to train', choices=['persons', 'gestures', 'multitask', 'poses'])
     parser.add_argument('checkpoint', help='path to trained checkpoint')
     parser.add_argument('--val', action='store_true')
     return parser.parse_args()
@@ -38,7 +39,7 @@ def main():
 
     model = YOLO(args.checkpoint)
 
-    if args.val:
+    if args.val == True:
         model.val()
         print('yay')
     else:

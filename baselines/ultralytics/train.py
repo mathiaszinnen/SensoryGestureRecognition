@@ -4,7 +4,7 @@ import argparse
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('type', help='Type of model to train', choices=['persons', 'gestures', 'multitask'])
+    parser.add_argument('type', help='Type of model to train', choices=['persons', 'gestures', 'poses', 'multitask'])
     return parser.parse_args()
 
 

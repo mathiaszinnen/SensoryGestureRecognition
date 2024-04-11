@@ -100,7 +100,7 @@ def convert_coco_json(src_imgs, src_anns, out_dir, use_keypoints=False):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('type', type=str, choices=['person', 'gesture','multitask'])
+    parser.add_argument('type', type=str, choices=['person', 'gesture','pose','multitask'])
     args = parser.parse_args()
 
     use_kpts = False
@@ -113,7 +113,8 @@ if __name__ == '__main__':
         out_dir = 'datasets/yolo_gestures'
     elif args.type == 'pose':
         src_anns = 'data/annotations/'
-        out_dir = 'dataset/yolo_poses'
+        out_dir = 'datasets/yolo_poses'
+        use_kpts=True
     elif args.type == 'multitask':
         src_anns = 'data/annotations/gesture_detection'
         out_dir = 'datasets/yolo_multitask'
