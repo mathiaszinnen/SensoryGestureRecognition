@@ -38,6 +38,7 @@ def parse_args():
     parser.add_argument('--det_thresh', type=float, help='keep only detection with confidence over det_thresh.',
                         default=.5)
     parser.add_argument('--vis', help='Draw visualizations of classifications and detections', action='store_true')
+    parser.add_argument('--val', help='Create predictions for the validation split', action='store_true')
     return parser.parse_args()
 
 def handle_vis(cfg):
@@ -60,17 +61,22 @@ def parse_det_cfg(args):
     det_cfg.load_from=args.detection_weights
     if args.vis:
         det_cfg.default_hooks.visualization.test_out_dir=f'{workdir}/detection'
+    if args.val:
+        det_cfg.test_dataloader.dataset = det_cfg.val_dataloader.dataset
+        det_cfg.test_evaluator.ann_file = det_cfg.val_evaluator.ann_file
 
     return det_cfg
 
 
-def generate_person_boxes(det_cfg):
+def generate_person_boxes(det_cfg, val=False):
+    ann_file = det_cfg.test_evaluator.ann_file
+
     det_runner = RUNNERS.build(det_cfg)
     det_runner.test()
 
     with open(f'{det_cfg.work_dir}/detections.bbox.json') as f:
         person_boxes = json.load(f)
-    with open(f'{det_cfg.test_evaluator.ann_file}') as f:
+    with open(ann_file) as f:
         coco = json.load(f)
     coco['annotations'] = person_boxes
     return coco
@@ -224,7 +230,11 @@ def main():
             draw_boxes(img, box_anns, coco_img, cls_runner.visualizer)
 
 
-    out_path_base = '/hdd/sniffyart/predictions/debug'
+    if args.val:
+        out_path_base = '/hdd/sniffyart/predictions/val'
+    else:
+        out_path_base = '/hdd/sniffyart/predictions/test'
+
     out_path = f'{out_path_base}/t{int(det_thresh*100)}_preds.json'
     with open(out_path, 'w') as f:
         json.dump(updated_anns, f)

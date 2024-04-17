@@ -87,12 +87,12 @@ def main():
     cfg.load_from = args.checkpoint
 
     if args.show or args.show_dir:
-        # cfg = trigger_visualization_hook(cfg, args) 
-        cfg.default_hooks.visualization.enable = True
-        cfg.default_hooks.visualization.show = args.show
-        cfg.default_hooks.visualization.wait_time = 0
-        cfg.default_hooks.visualization.out_dir = args.show_dir
-        cfg.default_hooks.visualization.interval = 1
+        cfg = trigger_visualization_hook(cfg, args) 
+        # cfg.default_hooks.visualization.enable = True
+        # cfg.default_hooks.visualization.show = args.show
+        # cfg.default_hooks.visualization.wait_time = 0
+        # cfg.default_hooks.visualization.out_dir = args.show_dir
+        # cfg.default_hooks.visualization.interval = 1
 
     if 'runner_type' not in cfg:
         # build the default runner
