@@ -28,7 +28,7 @@ echo "[$(date)] Code successfully copied."
 
 # COPY DATA TO COMPUTE NODE
 readonly SOURCE_DATA=/home/atuin/$GROUP/$USER/data/sensoryart/crossval/fold${SLURM_ARRAY_TASK_ID}.tar
-readonly TARGET_DATA=${TARGET_PATH}/mm/data/sniffyart # should be called sensoryart, but let's keep it backward compatible
+readonly TARGET_DATA=${TARGET_PATH}/mm/data 
 
 mkdir -p "${TARGET_DATA}"
 echo "[$(date)] Copying data from ${SOURCE_DATA} to ${TARGET_DATA}"
@@ -42,7 +42,7 @@ mkdir -p "${WORK_DIR}"
 echo "CURRENT WORKING DIRECTORY CONTENTS: $(ls .)"
 
 GPUS=1
-CONFIG=configs/gesture_detection.py
+CONFIG=configs/gesture_detection_crossval.py
 
 ./tools/dist_train_hpc.sh ${CONFIG} ${GPUS} --work-dir ${WORK_DIR}
 
