@@ -42,3 +42,5 @@ test_evaluator = dict(
 )
 
 max_epochs = 1 # sanity check first
+train_cfg = dict(
+    type='EpochBasedTrainLoop', max_epochs=max_epochs)
