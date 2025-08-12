@@ -13,6 +13,11 @@
 
 set -e 
 
+export http_proxy=http://proxy:80
+export https_proxy=http://proxy:80
+export HTTP_PROXY=http://proxy:80
+export HTTPS_PROXY=https://proxy:80
+
 readonly GROUP=$(id -gn)
 
 # COPY CODE DIRECTORY TO COMPUTE NODE
@@ -35,11 +40,40 @@ echo "[$(date)] Copying data from ${SOURCE_DATA} to ${TARGET_DATA}"
 tar xf ${SOURCE_DATA} -C ${TARGET_DATA} --strip-components=1 # remove outer foldX directory to comply with mmdetection config expectations
 echo "[$(date)] Data successfully copied."
 
+source "/home/atuin/${GROUP}/${USER}/venvs/sensoryart/bin/activate"
+# patch the missing info field in the annotation jsons
+python - <<'PY'
+import json, sys, time
+paths = [
+    "data/annotations/person_keypoints_val2017.json",
+    "data/annotations/person_keypoints_test2017.json",
+]
+for p in paths:
+    with open(p, "r") as f:
+        d = json.load(f)
+    if "info" not in d:
+        d["info"] = {
+            "description": "SensoryArt crossval",
+            "version": "1.0",
+            "year": 2025,
+            "date_created": time.strftime("%Y-%m-%d")
+        }
+    if "licenses" not in d:
+        d["licenses"] = []
+    with open(p, "w") as f:
+        json.dump(d, f)
+    print(f"Patched {p}")
+PY
+
+
 # TRAINING
 readonly WORK_DIR="${TARGET_PATH}/work_dir"
 mkdir -p "${WORK_DIR}"
 
-echo "CURRENT WORKING DIRECTORY CONTENTS: $(ls .)"
+# Save console output to workdir
+LOG_FILE="${WORK_DIR}/console_${SLURM_JOB_ID}_${SLURM_ARRAY_TASK_ID}.log"
+exec > >(tee -a "$LOG_FILE") 2>&1
+echo "Logging console output to: $LOG_FILE"
 
 GPUS=1
 CONFIG=configs/gesture_detection_crossval.py
@@ -47,16 +81,25 @@ CONFIG=configs/gesture_detection_crossval.py
 ./tools/dist_train_hpc.sh ${CONFIG} ${GPUS} --work-dir ${WORK_DIR}
 
 
-CONFIG=$1
-GPUS=$2
-NNODES=${NNODES:-1}
-NODE_RANK=${NODE_RANK:-0}
-PORT=${PORT:-29500}
-MASTER_ADDR=${MASTER_ADDR:-"127.0.0.1"}
+# TESTING
+CKPT=""
+if [ -f "${WORK_DIR}/last_checkpoint" ]; then
+  CKPT="${WORK_DIR}/last_checkpoint"
+else
+  echo "No checkpoint found in ${WORK_DIR}" >&2
+  exit 1
+fi
+echo "Using checkpoint: ${CKPT}"
 
+# Run test (single GPU)
+TEST_OUT="${WORK_DIR}/preds"
+python test.py $CONFIG $CKPT \
+    --cfg-options test_evaluator.format_only=True test_evaluator.outfile_prefix=$OUT_FILE
+echo "[$(date)] Test finished. Predictions: ${TEST_OUT}"
 
 # COPY OUTPUT TO $WORK
 TARGET_WORKDIR="$WORK/work_dirs/${SLURM_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
 mkdir -p "${TARGET_WORKDIR}"
 cat "$0" > ${TARGET_WORKDIR}/slurm.sh # copy this file to workdir
 cp -r ${WORK_DIR} ${TARGET_WORKDIR}
+

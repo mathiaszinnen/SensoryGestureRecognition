@@ -10,7 +10,7 @@ MASTER_ADDR=${MASTER_ADDR:-"127.0.0.1"}
 
 GROUP=$(id -gn) 
 source "/home/atuin/${GROUP}/${USER}/venvs/sensoryart/bin/activate"
-echo "PYTHON VERSION: $(which python)"
+
 
 # PYTHONPATH="$(dirname $0)/..":$PYTHONPATH \
 python -m torch.distributed.launch \
