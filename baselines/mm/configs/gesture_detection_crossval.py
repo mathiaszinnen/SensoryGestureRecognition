@@ -43,4 +43,7 @@ test_evaluator = dict(
 
 max_epochs = 1 # sanity check first
 train_cfg = dict(
-    type='EpochBasedTrainLoop', max_epochs=max_epochs)
+    # type='EpochBasedTrainLoop', max_epochs=max_epochs)
+    type='IterBasedTrainLoop',
+    max_iters=100,
+    val_interval=100)

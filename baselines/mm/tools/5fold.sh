@@ -80,20 +80,21 @@ CONFIG=configs/gesture_detection_crossval.py
 
 ./tools/dist_train_hpc.sh ${CONFIG} ${GPUS} --work-dir ${WORK_DIR}
 
-
-# TESTING
-CKPT=""
-if [ -f "${WORK_DIR}/last_checkpoint" ]; then
-  CKPT="${WORK_DIR}/last_checkpoint"
+# Resolve checkpoint from last_checkpoint (it contains a path)
+if [[ -f "${WORK_DIR}/last_checkpoint" ]]; then
+  read -r CKPT < "${WORK_DIR}/last_checkpoint"   # read single line, strip newline
+  [[ "$CKPT" != /* ]] && CKPT="${WORK_DIR}/${CKPT}"  # make absolute if relative
 else
-  echo "No checkpoint found in ${WORK_DIR}" >&2
+  echo "No last_checkpoint file in ${WORK_DIR}" >&2
   exit 1
 fi
+
 echo "Using checkpoint: ${CKPT}"
 
 # Run test (single GPU)
 TEST_OUT="${WORK_DIR}/preds"
 python test.py $CONFIG $CKPT \
+    --work-dir "$WORK_DIR" \
     --cfg-options test_evaluator.format_only=True test_evaluator.outfile_prefix=$OUT_FILE
 echo "[$(date)] Test finished. Predictions: ${TEST_OUT}"
 
