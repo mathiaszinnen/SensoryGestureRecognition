@@ -1,14 +1,14 @@
 #!/bin/bash -l
-#SBATCH --gres=gpu:a100:2
+#SBATCH --gres=gpu:a40:1
 #SBATCH --time=23:59:00
-#SBATCH --job-name=sensoryart_crossval
+#SBATCH --job-name=dino_rn50
 #SBATCH --array=0-4 # inclusive 
 #SBATCH --export=NONE
 #SBATCH --output=/home/atuin/b268dc/b268dc10/logs/ed-actionpose/%x_%j_%a
 #SBATCH --error=/home/atuin/b268dc/b268dc10/logs/ed-actionpose/%x_%j_%a
 
-GPUS=2
-CONFIG=configs/gesture_detection_crossval.py
+GPUS=1
+CONFIG=configs/gesture_detection_crossval_rn50.py
 
 # RUN FROM PROJECT ROOT
 
@@ -131,7 +131,7 @@ else
 fi
 
 # COPY OUTPUT TO $WORK
-TARGET_WORKDIR="$WORK/work_dirs/${SLURM_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
+TARGET_WORKDIR="$WORK/work_dirs/dino_rn50/${SLURM_ARRAY_TASK_ID}"
 mkdir -p "${TARGET_WORKDIR}"
 cat "$0" > ${TARGET_WORKDIR}/slurm.sh # copy this file to workdir
 cp -r ${WORK_DIR} ${TARGET_WORKDIR}

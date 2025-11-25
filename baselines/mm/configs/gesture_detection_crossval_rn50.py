@@ -1,5 +1,5 @@
 _base_ = [
-    'gesture_detection.py'
+    'gesture_detection_rn50.py'
 ]
 
 
@@ -9,8 +9,9 @@ classes = ('cooking', 'dancing', 'drinking', 'eating', 'holding the nose',
         'smoking', 'sniffing', 'textile work', 'writing', 'painting', 
         'none')     # still need sensoryart classes
 
+
 train_dataloader = dict(
-    batch_size=1,
+    batch_size=2,
     dataset = dict(
         type=dataset_type,
         metainfo=dict(classes=classes),
